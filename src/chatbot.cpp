@@ -12,7 +12,7 @@
 ChatBot::ChatBot()
 {
     // invalidate data handles
-    _image = nullptr;
+    _image = NULL;
     _chatLogic = nullptr;
     _rootNode = nullptr;
 }
@@ -34,19 +34,76 @@ ChatBot::~ChatBot()
 {
     std::cout << "ChatBot Destructor" << std::endl;
 
-    // deallocate heap memory
-    if(_image != NULL) // Attention: wxWidgets used NULL and not nullptr
-    {
+     // deallocate heap memory
+     if(_image != NULL) // Attention: wxWidgets used NULL and not nullptr
+     {
         delete _image;
         _image = NULL;
-    }
+     }
 }
 
-//// STUDENT CODE
-////
+ChatBot::ChatBot(const ChatBot& src)
+{
+    std::cout << "ChatBot Copy Constructor" << std::endl;
+    
+    _image = new wxBitmap(*src._image);
+    _currentNode = src._currentNode;
+    _rootNode = src._rootNode;
+    _chatLogic = src._chatLogic;
+}
 
-////
-//// EOF STUDENT CODE
+ChatBot& ChatBot::operator=(const ChatBot& src)
+{
+    std::cout << "ChatBot Copy Assignment Operator" << std::endl;
+    if (this == &src)
+        return *this;
+
+    delete _image;
+    _image = new wxBitmap(*src._image);
+    _currentNode = src._currentNode;
+    _rootNode = src._rootNode;
+    _chatLogic = src._chatLogic;
+
+    return *this;
+}
+
+ChatBot::ChatBot(ChatBot &&src)
+{
+    std::cout << "ChatBot Move Constructor" << std::endl;
+    
+    _image = src._image;
+    _currentNode = src._currentNode;
+    _rootNode = src._rootNode;
+    _chatLogic = src._chatLogic;
+    _chatLogic->SetChatbotHandle(this);
+
+    // invalidate source
+    src._image = NULL;
+    src._currentNode = nullptr;
+    src._rootNode = nullptr;
+    src._chatLogic = nullptr; 
+}
+
+ChatBot& ChatBot::operator=(ChatBot&& src)
+{
+    std::cout << "ChatBot Move Assignment Operator" << std::endl;
+    if (this == &src)
+        return *this;
+    delete _image;
+    _image = src._image;
+    _currentNode = src._currentNode;
+    _rootNode = src._rootNode;
+    _chatLogic = src._chatLogic;
+    _chatLogic->SetChatbotHandle(this);
+
+    // invalidate source
+    src._image = NULL;
+    src._currentNode = nullptr;
+    src._rootNode = nullptr;
+    src._chatLogic = nullptr; 
+
+    return *this;
+}
 
 void ChatBot::ReceiveMessageFromUser(std::string message)
 {
